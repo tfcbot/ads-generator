@@ -1,0 +1,18 @@
+[install]
+# Save exact version instead of caret (^) in package.json
+exact = false
+
+# Don't generate a lockfile
+lockfile = true
+
+# Install dev dependencies (package.json#devDependencies)
+dev = true
+
+# Install optional dependencies (package.json#optionalDependencies)
+optional = true
+
+# Frozen (don't change package.json + lockfile)
+frozenLockfile = false
+
+[workspaces]
+enable = true 

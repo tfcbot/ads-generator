@@ -1,0 +1,24 @@
+{
+    "extends": "@tsconfig/node22/tsconfig.json",
+    "compilerOptions": {
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+        "baseUrl": ".",
+        "paths": {
+          "@services/*": ["../../packages/core/src/services/*"],
+          "@agent-runtime/*": ["../../packages/core/src/orchestrator/agent-runtime/*"],
+          "@metadata/*": ["../../packages/core/src/metadata/*"],
+          "@lib/*": ["../../packages/core/src/lib/*"],
+          "@utils/*": ["../../packages/utils/src/*"],
+        }, 
+       //"esModuleInterop": true
+      }, 
+      "include": [
+        "**/*.test.ts", 
+        "**/*.ts",    
+        "src/**/*", 
+        "test/**/*", 
+        "sst-env.d.ts"
+  , "../metadata/agents", "../metadata/credits.schema.ts", "../metadata/http-responses.schema.ts", "../metadata/orchestrator.schema.ts", "../metadata/task.schema.ts", "../metadata/user.schema.ts"    ]
+  }
+  

@@ -1,0 +1,40 @@
+{
+  "name": "@cursor-full-stack-template/core",
+  "version": "0.0.1",
+  "exports": {
+    "./*": [
+      "./*/*/index.ts",
+      "./*/*.ts"
+    ]
+  },
+  "scripts": {
+    "test": "bun test --preload ./tests/setup.ts --timeout 2000",
+    "test:silent": "bun test --preload ./tests/setup.ts --silent --timeout 2000",
+    "test:unit": "bun test --preload ./tests/setup.ts tests/agent-tests/ --timeout 2000",
+    "test:api": "bun test --preload ./tests/setup.ts tests/api-tests/research-endpoints.test.ts --timeout 10000"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/idempotency": "^2.3.0",
+    "@aws-sdk/client-bedrock": "^3.609.0",
+    "@aws-sdk/client-bedrock-agent": "^3.609.0",
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.609.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.609.0",
+    "@aws-sdk/client-dynamodb": "^3.609.0",
+    "@aws-sdk/client-lambda": "^3.777.0",
+    "@aws-sdk/client-s3": "^3.609.0",
+    "@aws-sdk/client-sns": "^3.777.0",
+    "@aws-sdk/client-sqs": "^3.609.0",
+    "@aws-sdk/lib-dynamodb": "^3.610.0",
+    "aws-sdk-client-mock": "^4.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "sinon": "^20.0.0",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.8",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.14.5",
+    "typescript": "^5.4.5"
+  }
+}

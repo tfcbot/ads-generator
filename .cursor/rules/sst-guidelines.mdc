@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# SST Guidelines
+
+1. Do not attempt to run SST when debugging.
+2. Never make assumptions about SST functionality.
+3. Always refer to SST documentation for guidance and implementation details.

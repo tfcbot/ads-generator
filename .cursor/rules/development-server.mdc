@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Development Server Guidelines
+
+1. Before starting a dev server, always check if a server is already running on port 3000.
+2. If a server is already running on port 3000, do not start a new server.
+3. Do not kill existing servers that are running.

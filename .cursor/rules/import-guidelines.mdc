@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Import Guidelines
+
+1. Do not replace SST imports with '@lib/resource'.
+2. Maintain the original import paths and module references.
+3. Use the designated import structure for each module.

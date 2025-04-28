@@ -1,0 +1,9 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Model Configuration
+
+1. Do not change models from GPT-4o to GPT-4.
+2. Maintain consistent model configuration throughout the application.

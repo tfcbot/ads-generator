@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Workflow Guidelines
+
+When working on this project, you should:
+
+1. Always explain your plan in a step-by-step format before executing it.
+2. Present actions as a numbered list without including code snippets in the planning phase.
+3. Keep additional thinking separate from the action plan.

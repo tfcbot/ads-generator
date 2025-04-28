@@ -1,0 +1,9 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# API Guidelines
+
+1. Do not use the `chat.completions` API for OpenAI.
+2. When interacting with OpenAI, use appropriate alternative endpoints.

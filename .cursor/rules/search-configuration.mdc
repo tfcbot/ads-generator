@@ -1,0 +1,9 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Search Configuration
+
+1. Do not change or modify the `web_search_preview` configuration.
+2. Maintain existing search functionality as configured.

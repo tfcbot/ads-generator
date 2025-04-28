@@ -1,0 +1,36 @@
+{
+  "name": "cursor-full-stack-template",
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --cwd packages/frontend dev",
+    "build": "bun run --cwd packages/frontend build",
+    "test": "bun test --timeout 10000"
+  },
+  "devDependencies": {
+    "@clerk/backend": "^1.13.9",
+    "@clerk/types": "^3.60.0",
+    "@tsconfig/node22": "^22",
+    "jwks-rsa": "^3.1.0",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@unkey/api": "^0.35.0",
+    "aws-lambda": "^1.0.7",
+    "openai": "^4.91.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sst": "3.13.10",
+    "stripe": "^18.0.0",
+    "zod": "^3.24.2"
+  },
+  "trustedDependencies": [
+    "sharp"
+  ],
+  "repository": "https://github.com/tfcbot/cursor-full-stack-template.git",
+  "author": "tfcbot <admin@blurware.com>",
+  "license": "MIT",
+  "private": true
+}

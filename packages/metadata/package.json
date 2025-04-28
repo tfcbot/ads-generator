@@ -1,0 +1,21 @@
+{
+    "name": "@cursor-full-stack-template/metadata",
+    "type": "module",
+    "version": "0.0.0",
+    "scripts": {
+      "test": "sst shell vitest"
+    },
+    "exports": {
+      "./*": [
+        "./src/*/index.ts",
+        "./src/*.ts"
+      ]
+    },
+    "dependencies": {
+      "sst": "3.13.10"
+    },
+    "devDependencies": {
+      "vitest": "^2"
+    }
+  }
+  

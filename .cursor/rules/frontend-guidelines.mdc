@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Frontend Guidelines
+
+1. Use Tailwind CSS version 3.4.17.
+2. Do not use Tailwind v4.
+3. Ensure all Tailwind configurations are compatible with version 3.4.17.

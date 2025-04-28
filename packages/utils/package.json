@@ -1,0 +1,18 @@
+{
+  "name": "@cursor-full-stack-template/utils",
+  "version": "0.0.0",
+  "dependencies": {
+    "@clerk/backend": "^1.25.8",
+    "@clerk/types": "^4.50.1",
+    "aws-lambda": "^1.0.7",
+    "sst": "3.13.10",
+    "svix": "^1.63.0"
+  },
+  "scripts": {
+    "shell": "sst shell tsx"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "tsx": "^4.7.2"
+  }
+}

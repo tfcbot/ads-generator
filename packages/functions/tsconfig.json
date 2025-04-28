@@ -1,0 +1,17 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+        "@services/*": ["../../packages/core/src/services/*"], 
+        "@agent-runtime/*": ["../../packages/core/src/orchestrator/agent-runtime/*"],
+        "@lib/*": ["../../packages/core/src/lib/*"],
+        "@metadata/*": ["../../packages/core/src/metadata/*"],
+        "@utils/*": ["../../packages/utils/src/*"],
+      },
+      "esModuleInterop": true
+    }, 
+  
+  }

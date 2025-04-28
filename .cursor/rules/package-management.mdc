@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Package Management
+
+1. Always use Bun instead of Yarn or NPM for package management.
+2. For installing dependencies, use `bun install` or `bun add`.
+3. For running scripts, use `bun run`.
