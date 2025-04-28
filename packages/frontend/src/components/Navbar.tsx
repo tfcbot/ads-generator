@@ -15,7 +15,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/" className="text-xl font-semibold text-fg-primary">
-            Research Agent
+            Ads Generator
           </Link>
         </div>
         
@@ -25,9 +25,7 @@ export function Navbar() {
           <NavLink href="/" active={pathname === '/'}>
             Submit Task
           </NavLink>
-          <NavLink href="/research" active={pathname === '/research'}>
-            View Research
-          </NavLink>
+
           
           {isSignedIn ? (
             <SignOutButton>
@@ -69,4 +67,4 @@ function NavLink({
       {children}
     </Link>
   );
-} 
+}    

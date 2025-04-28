@@ -1,6 +1,4 @@
-export enum Queue {
-    research = 'research',
-}
+export enum Queue {}
 
 export enum Topic {
   task = 'task',

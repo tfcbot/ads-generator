@@ -22,7 +22,7 @@ export function Sidebar() {
       <div className="p-4 flex items-center justify-between">
         {!isCollapsed && (
           <div className="transition-opacity duration-300">
-            <h1 className="text-xl font-bold">Research Agent</h1>
+            <h1 className="text-xl font-bold">Ads Generator</h1>
           </div>
         )}
         <button 
@@ -43,9 +43,7 @@ export function Sidebar() {
         <NavLink href="/" active={pathname === '/'} isCollapsed={isCollapsed}>
           {isCollapsed ? '📝' : 'Submit Task'}
         </NavLink>
-        <NavLink href="/research" active={pathname === '/research'} isCollapsed={isCollapsed}>
-          {isCollapsed ? '🔍' : 'View Research'}
-        </NavLink>
+
         <NavLink href="/ads" active={pathname.startsWith('/ads')} isCollapsed={isCollapsed}>
           {isCollapsed ? '🎨' : 'Ads Generator'}
         </NavLink>
@@ -106,4 +104,4 @@ function NavLink({
       {children}
     </Link>
   );
-}  
+}        

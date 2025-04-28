@@ -1,5 +1,5 @@
 import { 
-  researchTable, usersTable, userKeysTable, adsTable
+  usersTable, userKeysTable, adsTable
 } from "./database";
 
 import { clerkClientPublishableKey, clerkClientSecretKey, secrets, stripePublishableKey } from "./secrets";
@@ -8,7 +8,7 @@ import { clerkClientPublishableKey, clerkClientSecretKey, secrets, stripePublish
 export const api = new sst.aws.ApiGatewayV2('BackendApi')
 
 
-const tables = [researchTable, usersTable, userKeysTable, adsTable]
+const tables = [usersTable, userKeysTable, adsTable]
 
 export const apiResources = [
   ...tables,
@@ -16,21 +16,7 @@ export const apiResources = [
 ]
 
 
-api.route("GET /research", {
-  link: [...apiResources],
-  handler: "./packages/functions/src/agent-runtime.api.getAllUserResearchHandler",
-})
 
-// Add a route for getting a specific research item by ID
-api.route("GET /research/{id}", {
-  link: [...apiResources],
-  handler: "./packages/functions/src/agent-runtime.api.getResearchByIdHandler",
-})
-
-api.route("POST /research", {
-  link: [...apiResources],
-  handler: "./packages/functions/src/agent-runtime.api.requestResearchHandler",
-})
 
 
 api.route("POST /stripe-webhook", {

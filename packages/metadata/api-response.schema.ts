@@ -13,16 +13,7 @@ export const UserCreditsResponseSchema = z.object({
   credits: z.number(),
 });
 
-// Research item response
-export const ResearchItemResponseSchema = z.object({
-  researchId: z.string(),
-  title: z.string(),
-  content: z.string(),
-  status: z.string().optional(),
-});
 
-// Research list response
-export const ResearchListResponseSchema = z.array(ResearchItemResponseSchema);
 
 // API Key response
 export const ApiKeyResponseSchema = z.object({
@@ -38,8 +29,7 @@ export const CheckoutResponseSchema = z.object({
 // Type exports for use in both frontend and backend
 export type ApiResponse<T = any> = z.infer<typeof ApiResponseSchema> & { data: T };
 export type UserCreditsResponse = z.infer<typeof UserCreditsResponseSchema>;
-export type ResearchItemResponse = z.infer<typeof ResearchItemResponseSchema>;
-export type ResearchListResponse = z.infer<typeof ResearchListResponseSchema>;
+
 export type ApiKeyResponse = z.infer<typeof ApiKeyResponseSchema>;
 export type CheckoutResponse = z.infer<typeof CheckoutResponseSchema>;
 
@@ -63,4 +53,4 @@ export const parseApiResponse = <T>(responseData: any, schema: z.ZodType<T>): T 
     // If that fails, try to parse the data directly
     return schema.parse(responseData);
   }
-}; 
+};    
