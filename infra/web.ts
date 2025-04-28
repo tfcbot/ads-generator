@@ -68,16 +68,16 @@ api.route("POST /checkout", {
 
 api.route("GET /ads", {
   link: [...apiResources],
-  handler: "./packages/functions/src/ads-generator.api.getAllUserAdsHandler",
+  handler: "./packages/functions/src/agent-runtime.api.getAllUserAdsHandler",
 })
 
 // Add a route for getting a specific ad by ID
 api.route("GET /ads/{id}", {
   link: [...apiResources],
-  handler: "./packages/functions/src/ads-generator.api.getAdByIdHandler",
+  handler: "./packages/functions/src/agent-runtime.api.getAdByIdHandler",
 })
 
 api.route("POST /ads", {
   link: [...apiResources],
-  handler: "./packages/functions/src/ads-generator.api.createAdHandler",
+  handler: "./packages/functions/src/agent-runtime.api.requestAdHandler",
 })

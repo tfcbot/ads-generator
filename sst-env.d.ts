@@ -5,6 +5,10 @@
 
 declare module "sst" {
   export interface Resource {
+    "Ads": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
     "BackendApi": {
       "type": "sst.aws.ApiGatewayV2"
       "url": string
@@ -28,18 +32,6 @@ declare module "sst" {
     "OpenAiApiKey": {
       "type": "sst.sst.Secret"
       "value": string
-    }
-    "RedirectFailureUrl": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "RedirectSuccessUrl": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "Research": {
-      "name": string
-      "type": "sst.aws.Dynamo"
     }
     "ResendApiKey": {
       "type": "sst.sst.Secret"

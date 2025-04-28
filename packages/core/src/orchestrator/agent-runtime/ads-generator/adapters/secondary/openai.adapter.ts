@@ -2,13 +2,12 @@ import OpenAI from "openai";
 import { RequestAdInput, RequestAdOutput, RequestAdOutputSchema, systemPrompt, userPrompt } from "@metadata/agents/ads-generator.schema";
 import { Resource } from "sst";
 import { withRetry } from "@utils/tools/retry";
-import { uploadImageToS3 } from "@utils/tools/s3-helpers";
 
 const client = new OpenAI({
   apiKey: Resource.OpenAiApiKey.value
 });
 
-export const generateAd = async (input: RequestAdInput): Promise<RequestAdOutput> => {
+export const generateAd = async (input: RequestAdInput): Promise<string> => {
   try {
     const response = await client.images.generate({
       model: "gpt-image-1",
@@ -17,25 +16,15 @@ export const generateAd = async (input: RequestAdInput): Promise<RequestAdOutput
       size: "1024x1024",
     });
 
-    const imageUrl = response.data[0].url;
+    // gpt-image-1 model returns base64 encoded images instead of URLs
+    const imageBase64 = response.data[0].b64_json;
     
-    if (!imageUrl) {
-      throw new Error('No image URL returned from OpenAI');
+    if (!imageBase64) {
+      throw new Error('No image data returned from OpenAI');
     }
     
-    const s3Url = await uploadImageToS3(imageUrl, `ads/${input.id}.png`);
-    
-    const adData = RequestAdOutputSchema.parse({
-      adId: input.id,
-      prompt: input.prompt,
-      targetAudience: input.targetAudience,
-      brandInfo: input.brandInfo,
-      style: input.style,
-      imageUrl: s3Url,
-      adStatus: "completed"
-    });
-    
-    return adData;
+    // Upload the base64 image to S3
+    return imageBase64;
   } catch (error) {
     console.error('Error generating ad:', error);
     throw error;

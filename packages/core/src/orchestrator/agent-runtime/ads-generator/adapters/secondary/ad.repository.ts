@@ -8,7 +8,7 @@ export interface AdRepository {
   getAdsByUserId(userId: string): Promise<RequestAdOutput[]>;
 }
 
-const tableName = Resource.Ads.tableName;
+const tableName = Resource.Ads.name;
 
 export const createAdRepository = (
   dynamoDbClient: DynamoDBDocumentClient

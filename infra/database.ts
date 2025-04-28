@@ -24,7 +24,6 @@ export const adsTable = new sst.aws.Dynamo("Ads", {
         userId: "string",
         adId: "string",
         adStatus: "string",
-        adImageUrl: "string"
     },
     primaryIndex: {hashKey: "adId"},
     globalIndexes: {
