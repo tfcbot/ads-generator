@@ -3,17 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGetAdsById } from '../hooks/useAdsHooks';
 import Link from 'next/link';
-import { RequestAdsOutput, AdsStatus } from '../../../metadata/agents/ads-agent.schema';
-
-type AdsDataWrapper = {
-  data: RequestAdsOutput;
-};
-
-type AdsBodyWrapper = {
-  body: RequestAdsOutput;
-};
-
-type AdsResponse = RequestAdsOutput | AdsDataWrapper | AdsBodyWrapper;
+import { RequestAdOutput, AdStatus } from '@metadata/agents/ads-agent.schema';
 
 export function AdsDetail({ adId }: { adId: string }) {
   const { data: ad, isLoading, isError } = useGetAdsById(adId);
@@ -40,112 +30,25 @@ export function AdsDetail({ adId }: { adId: string }) {
 
   const isPending = () => {
     if (!ad) return false;
-    
-    const adData = ad as unknown as AdsResponse;
-    
-    if ('adStatus' in adData && adData.adStatus === AdsStatus.PENDING) {
-      return true;
-    }
-    
-    if ('data' in adData && adData.data && 
-        'adStatus' in adData.data && adData.data.adStatus === AdsStatus.PENDING) {
-      return true;
-    }
-    
-    if ('body' in adData && adData.body && 
-        'adStatus' in adData.body && adData.body.adStatus === AdsStatus.PENDING) {
-      return true;
-    }
-    
-    return false;
+    return ad.adStatus === AdStatus.PENDING;
   };
 
-  const getContent = () => {
-    if (!ad) return null;
-    
-    const adData = ad as unknown as AdsResponse;
-    
-    if ('content' in adData && typeof adData.content === 'string') {
-      return adData.content;
-    }
-    
-    if ('data' in adData && adData.data && typeof adData.data.content === 'string') {
-      return adData.data.content;
-    }
-    
-    if ('body' in adData && adData.body && typeof adData.body.content === 'string') {
-      return adData.body.content;
-    }
-    
-    console.log('Unrecognized ad data structure:', ad);
-    return null;
-  };
-  
-  const getImageUrl = () => {
-    if (!ad) return null;
-    
-    const adData = ad as unknown as AdsResponse;
-    
-    if ('imageUrl' in adData && typeof adData.imageUrl === 'string') {
-      return adData.imageUrl;
-    }
-    
-    if ('data' in adData && adData.data && typeof adData.data.imageUrl === 'string') {
-      return adData.data.imageUrl;
-    }
-    
-    if ('body' in adData && adData.body && typeof adData.body.imageUrl === 'string') {
-      return adData.body.imageUrl;
-    }
-    
-    return null;
-  };
-  
-  const getTitle = () => {
-    if (!ad) return { title: 'Ad', subtitle: '' };
-    
-    const adData = ad as unknown as AdsResponse;
-    
-    let title = '';
-    let subtitle = '';
-    
-    if ('title' in adData && typeof adData.title === 'string') {
-      const titleText = adData.title
-        .replace(/^\*\*(.*)\*\*$/, '$1') // Remove markdown ** if present
-        .trim();
-        
-      const titleMatch = titleText.match(/^(?:Title:\s*)?[""]?(.+?)[""]?$/i);
-      
-      title = titleMatch ? titleMatch[1] : titleText;
-    }
-    
-    if ('data' in adData && adData.data && typeof adData.data.title === 'string') {
-      const titleText = adData.data.title
-        .replace(/^\*\*(.*)\*\*$/, '$1')
-        .trim();
-        
-      const titleMatch = titleText.match(/^(?:Title:\s*)?[""]?(.+?)[""]?$/i);
-      title = titleMatch ? titleMatch[1] : titleText;
-    }
-    
-    if ('body' in adData && adData.body && typeof adData.body.title === 'string') {
-      const titleText = adData.body.title
-        .replace(/^\*\*(.*)\*\*$/, '$1')
-        .trim();
-        
-      const titleMatch = titleText.match(/^(?:Title:\s*)?[""]?(.+?)[""]?$/i);
-      title = titleMatch ? titleMatch[1] : titleText;
-    }
-    
-    return { title: title || 'Ad', subtitle };
-  };
-  
   const handleCopyToClipboard = () => {
-    if (getContent()) {
-      navigator.clipboard.writeText(getContent() || '');
+    if (ad?.content) {
+      navigator.clipboard.writeText(ad.content);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     }
+  };
+  
+  // Format title by removing markdown and special characters
+  const formatTitle = (title: string) => {
+    const cleanTitle = title
+      .replace(/^\*\*(.*)\*\*$/, '$1') // Remove markdown ** if present
+      .trim();
+      
+    const titleMatch = cleanTitle.match(/^(?:Title:\s*)?[""]?(.+?)[""]?$/i);
+    return titleMatch ? titleMatch[1] : cleanTitle;
   };
   
   if (isLoading) {
@@ -175,8 +78,7 @@ export function AdsDetail({ adId }: { adId: string }) {
     );
   }
   
-  const content = getContent();
-  const imageUrl = getImageUrl();
+  const title = ad.title ? formatTitle(ad.title) : 'Ad';
   
   return (
     <div className="max-w-4xl mx-auto">
@@ -198,11 +100,8 @@ export function AdsDetail({ adId }: { adId: string }) {
         <div>
           <div className="max-w-3xl">
             <h1 className="text-xl md:text-2xl font-bold text-fg-primary leading-tight mb-1">
-              {getTitle().title}
+              {title}
             </h1>
-            {getTitle().subtitle && (
-              <p className="text-sm text-fg-tertiary">{getTitle().subtitle}</p>
-            )}
           </div>
           
           {/* Action buttons below title, justified right */}
@@ -214,7 +113,7 @@ export function AdsDetail({ adId }: { adId: string }) {
                   : 'bg-bg-tertiary text-fg-primary hover:bg-bg-secondary'
               }`}
               onClick={handleCopyToClipboard}
-              disabled={!content}
+              disabled={!ad.content}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
@@ -238,11 +137,11 @@ export function AdsDetail({ adId }: { adId: string }) {
       {/* Main content */}
       <div className="bg-bg-secondary rounded-xl shadow-lg border border-border overflow-hidden">
         {/* Image display */}
-        {imageUrl && !isPending() ? (
+        {ad.imageUrl && !isPending() ? (
           <div className="w-full h-64 md:h-96 relative">
             <img 
-              src={imageUrl} 
-              alt={getTitle().title} 
+              src={ad.imageUrl} 
+              alt={title} 
               className="w-full h-full object-contain"
             />
           </div>
@@ -269,8 +168,8 @@ export function AdsDetail({ adId }: { adId: string }) {
         
         <div className="p-8">
           <div className="prose prose-lg prose-invert prose-headings:text-fg-primary prose-p:text-fg-secondary prose-a:text-accent-secondary max-w-none leading-relaxed">
-            {content ? (
-              content.split('\n\n').map((paragraph: string, index: number) => (
+            {ad.content ? (
+              ad.content.split('\n\n').map((paragraph: string, index: number) => (
                 <p key={index} className="mb-4">{paragraph}</p>
               ))
             ) : isPending() ? (

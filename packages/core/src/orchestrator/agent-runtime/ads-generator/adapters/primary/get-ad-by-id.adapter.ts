@@ -4,7 +4,7 @@ import {
   EventParser,
   LambdaAdapterOptions 
 } from '@lib/lambda-adapter.factory';
-import { GetAdInput, GetAdInputSchema } from '@metadata/agents/ads-generator.schema';
+import { GetAdInput, GetAdInputSchema, RequestAdOutput } from '@metadata/agents/ads-agent.schema';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { ValidUser } from '@metadata/saas-identity.schema';
 import { getAdUsecase } from '../../usecase/get-ad.usecase';
@@ -33,5 +33,8 @@ export const getAdByIdAdapter = createLambdaAdapter({
   useCase: getAdUsecase,
   eventParser: getAdByIdEventParser,
   options: adByIdAdapterOptions,
-  responseFormatter: (result) => OrchestratorHttpResponses.OK({ body: result })
+  responseFormatter: (result) => OrchestratorHttpResponses.GetAdResponse({body: {
+    message: 'Ad retrieved successfully',
+    data: result
+  }})
 });

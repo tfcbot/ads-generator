@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import { RequestAdOutputSchema } from '@metadata/agents/ads-agent.schema';
+
+
+
 
 // Generic API response wrapper
 export const ApiResponseSchema = z.object({
@@ -26,12 +30,15 @@ export const CheckoutResponseSchema = z.object({
   url: z.string(),
 });
 
+
 // Type exports for use in both frontend and backend
 export type ApiResponse<T = any> = z.infer<typeof ApiResponseSchema> & { data: T };
 export type UserCreditsResponse = z.infer<typeof UserCreditsResponseSchema>;
 
 export type ApiKeyResponse = z.infer<typeof ApiKeyResponseSchema>;
 export type CheckoutResponse = z.infer<typeof CheckoutResponseSchema>;
+
+export type RequestAdOutput = z.infer<typeof RequestAdOutputSchema>;  
 
 // Helper function to create standard API responses (for backend)
 export const createApiResponse = <T>(data: T, message: string = 'Success', status: 'success' | 'error' = 'success'): ApiResponse<T> => {
@@ -54,3 +61,4 @@ export const parseApiResponse = <T>(responseData: any, schema: z.ZodType<T>): T 
     return schema.parse(responseData);
   }
 };    
+

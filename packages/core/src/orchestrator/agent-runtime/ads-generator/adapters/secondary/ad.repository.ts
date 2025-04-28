@@ -1,5 +1,5 @@
 import { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
-import { SaveAdInput, RequestAdOutput, RequestAdOutputSchema } from '@metadata/agents/ads-generator.schema';
+import { SaveAdInput, RequestAdOutput, RequestAdOutputSchema } from '@metadata/agents/ads-agent.schema';
 import { Resource } from 'sst';
 
 export interface AdRepository {

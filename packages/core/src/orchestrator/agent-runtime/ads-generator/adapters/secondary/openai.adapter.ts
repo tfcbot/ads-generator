@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { RequestAdInput, RequestAdOutput, RequestAdOutputSchema, systemPrompt, userPrompt } from "@metadata/agents/ads-generator.schema";
+import { RequestAdInput, RequestAdOutput, RequestAdOutputSchema, systemPrompt, userPrompt } from "@metadata/agents/ads-agent.schema";
 import { Resource } from "sst";
 import { withRetry } from "@utils/tools/retry";
 
@@ -18,12 +18,10 @@ export const generateAd = async (input: RequestAdInput): Promise<string> => {
 
     // gpt-image-1 model returns base64 encoded images instead of URLs
     const imageBase64 = response.data[0].b64_json;
-    
     if (!imageBase64) {
       throw new Error('No image data returned from OpenAI');
     }
-    
-    // Upload the base64 image to S3
+  
     return imageBase64;
   } catch (error) {
     console.error('Error generating ad:', error);

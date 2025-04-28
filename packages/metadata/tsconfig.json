@@ -7,7 +7,7 @@
         "paths": {
           "@services/*": ["../../packages/core/src/services/*"],
           "@agent-runtime/*": ["../../packages/core/src/orchestrator/agent-runtime/*"],
-          "@metadata/*": ["../../packages/core/src/metadata/*"],
+          "@metadata/*": ["../../packages/metadata/*"],
           "@lib/*": ["../../packages/core/src/lib/*"],
           "@utils/*": ["../../packages/utils/src/*"],
         }, 
