@@ -31,3 +31,25 @@ export const userKeysTable = new sst.aws.Dynamo("UserKeys", {
         StatusIndex: { hashKey: "apiKeystatus" }
     }
 })
+
+export const adsTable = new sst.aws.Dynamo("Ads", {
+    fields: {
+        userId: "string",
+        adId: "string",
+        adStatus: "string",
+    },
+    primaryIndex: {hashKey: "adId"},
+    globalIndexes: {
+        UserIdIndex: { hashKey: "userId" },
+        StatusIndex: { hashKey: "adStatus" }
+    }
+})
+
+export const adImagesBucket = new sst.aws.Bucket("AdImages", {
+  cors: {
+    allowMethods: ["GET", "PUT", "POST"],
+    allowOrigins: ["*"],
+    allowHeaders: ["*"]
+  },
+  public: true
+})
