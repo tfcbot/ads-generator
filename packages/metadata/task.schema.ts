@@ -1,6 +1,5 @@
-import { Queue, Topic } from "./orchestrator.schema";
+import { Topic } from "./orchestrator.schema";
 import { z } from "zod";
-import { RequestResearchInputSchema } from "./agents/research-agent.schema";
 
 export const AgentMessageSchema = z.object({
   topic: z.nativeEnum(Topic),
@@ -24,14 +23,8 @@ export const DeliverableSchema = z.object({
 /**
  * Task Schemas
  */
-export const ResearchRequestTaskSchema = AgentMessageSchema.extend({
-  payload: RequestResearchInputSchema,
-});
 
-export type ResearchRequestTask = z.infer<typeof ResearchRequestTaskSchema>;
-
-export type AgentTask =
-  | ResearchRequestTask;
+export type AgentTask = Record<string, never>;
 
 
 
