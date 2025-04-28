@@ -1,12 +1,12 @@
 import { Resource } from "sst";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import axios from "axios";
 
 const s3Client = new S3Client({ region: "us-east-1" });
 
 export async function uploadImageToS3(imageUrl: string, key: string): Promise<string> {
-  const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-  const buffer = Buffer.from(response.data, 'binary');
+  const response = await fetch(imageUrl);
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
   
   const bucketName = process.env.AD_IMAGES_BUCKET_NAME || "ad-images-bucket";
   

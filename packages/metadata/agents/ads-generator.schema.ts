@@ -62,7 +62,6 @@ export const RequestAdOutputSchema = z.object({
   imageUrl: z.string(),
   adStatus: z.nativeEnum(AdStatus).default(AdStatus.COMPLETED),
 });
-
 export const SaveAdSchema = z.object({
   adId: z.string(),
   userId: z.string(),
@@ -70,7 +69,8 @@ export const SaveAdSchema = z.object({
   targetAudience: z.string(),
   brandInfo: z.string(),
   style: z.string().optional(),
-  imageUrl: z.string(),
+  imageUrl: z.string().optional(),
+  adStatus: z.nativeEnum(AdStatus)
 });
 
 export const GetAdInputSchema = z.object({  

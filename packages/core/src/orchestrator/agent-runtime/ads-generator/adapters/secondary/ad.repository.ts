@@ -8,10 +8,11 @@ export interface AdRepository {
   getAdsByUserId(userId: string): Promise<RequestAdOutput[]>;
 }
 
+const tableName = Resource.Ads.tableName;
+
 export const createAdRepository = (
   dynamoDbClient: DynamoDBDocumentClient
 ): AdRepository => {
-  const tableName = "Ads";
   console.info("Saving ad to table", tableName);
   return {
     async saveAd(ad: SaveAdInput): Promise<string> {
