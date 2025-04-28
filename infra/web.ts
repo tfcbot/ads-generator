@@ -1,5 +1,5 @@
 import { 
-  researchTable, usersTable, userKeysTable
+  researchTable, usersTable, userKeysTable, adsTable
 } from "./database";
 
 import { clerkClientPublishableKey, clerkClientSecretKey, secrets, stripePublishableKey } from "./secrets";
@@ -8,7 +8,7 @@ import { clerkClientPublishableKey, clerkClientSecretKey, secrets, stripePublish
 export const api = new sst.aws.ApiGatewayV2('BackendApi')
 
 
-const tables = [researchTable, usersTable, userKeysTable]
+const tables = [researchTable, usersTable, userKeysTable, adsTable]
 
 export const apiResources = [
   ...tables,
@@ -78,4 +78,20 @@ api.route("POST /checkout", {
   link: [...apiResources, frontend],
   handler: "./packages/functions/src/billing.api.checkoutHandler",
 
+})
+
+api.route("GET /ads", {
+  link: [...apiResources],
+  handler: "./packages/functions/src/ads-generator.api.getAllUserAdsHandler",
+})
+
+// Add a route for getting a specific ad by ID
+api.route("GET /ads/{id}", {
+  link: [...apiResources],
+  handler: "./packages/functions/src/ads-generator.api.getAdByIdHandler",
+})
+
+api.route("POST /ads", {
+  link: [...apiResources],
+  handler: "./packages/functions/src/ads-generator.api.createAdHandler",
 })

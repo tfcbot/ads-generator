@@ -31,3 +31,18 @@ export const userKeysTable = new sst.aws.Dynamo("UserKeys", {
         StatusIndex: { hashKey: "apiKeystatus" }
     }
 })
+
+export const adsTable = new sst.aws.Dynamo("Ads", {
+    fields: {
+        userId: "string",
+        adId: "string",
+        adStatus: "string",
+        adImageUrl: "string"
+    },
+    primaryIndex: {hashKey: "adId"},
+    globalIndexes: {
+        UserIdIndex: { hashKey: "userId" },
+        StatusIndex: { hashKey: "adStatus" }
+    }
+})
+
