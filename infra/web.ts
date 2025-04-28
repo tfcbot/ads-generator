@@ -1,5 +1,5 @@
 import { 
-  researchTable, usersTable, userKeysTable, adsTable, adImagesBucket
+  researchTable, usersTable, userKeysTable, adsTable
 } from "./database";
 
 import { clerkClientPublishableKey, clerkClientSecretKey, secrets, stripePublishableKey } from "./secrets";
@@ -12,7 +12,6 @@ const tables = [researchTable, usersTable, userKeysTable, adsTable]
 
 export const apiResources = [
   ...tables,
-  adImagesBucket,
   ...secrets
 ]
 

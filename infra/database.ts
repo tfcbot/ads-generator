@@ -37,6 +37,7 @@ export const adsTable = new sst.aws.Dynamo("Ads", {
         userId: "string",
         adId: "string",
         adStatus: "string",
+        adImageUrl: "string"
     },
     primaryIndex: {hashKey: "adId"},
     globalIndexes: {
@@ -45,11 +46,3 @@ export const adsTable = new sst.aws.Dynamo("Ads", {
     }
 })
 
-export const adImagesBucket = new sst.aws.Bucket("AdImages", {
-  cors: {
-    allowMethods: ["GET", "PUT", "POST"],
-    allowOrigins: ["*"],
-    allowHeaders: ["*"]
-  },
-  public: true
-})
