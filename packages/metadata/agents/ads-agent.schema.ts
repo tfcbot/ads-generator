@@ -40,6 +40,13 @@ Prompt: ${input.prompt}
 Target Audience: ${input.targetAudience}
 Brand Information: ${input.brandInfo}
 ${input.style ? `Style Preferences: ${input.style}` : ''}
+
+IMPORTANT REQUIREMENTS:
+- The image MUST be designed to fit perfectly within a 1024x1024 pixel square format.
+- All important text and visual elements must be well within the boundaries, with proper margins to prevent cutting off.
+- Ensure any text is legible and not too close to the edges.
+- Properly size and position all elements to be fully visible without cropping.
+- Maintain adequate spacing around the edges to prevent any content from being cut off.
 `;
 
 export const PendingAdSchema = z.object({
