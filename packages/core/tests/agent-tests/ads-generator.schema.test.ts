@@ -1,42 +1,31 @@
-import { describe, expect, test } from 'bun:test';
-
-enum AdStatus {
-  PENDING = "pending",
-  COMPLETED = "completed",
-  FAILED = "failed"
-}
-
-const mockSchemaValidation = {
-  parse: (data: any) => {
-    if (!data) throw new Error('Invalid data');
-    return data;
-  }
-};
-
-const RequestAdInputSchema = {
-  parse: (data: any) => {
-    if (!data.prompt || !data.targetAudience || !data.brandInfo || !data.userId || !data.keyId) {
-      throw new Error('Missing required fields');
-    }
-    return data;
-  }
-};
-
-const RequestAdOutputSchema = {
-  parse: (data: any) => {
-    if (!data.adId || !data.prompt || !data.targetAudience || !data.brandInfo || !data.imageUrl || !data.adStatus) {
-      throw new Error('Missing required fields');
-    }
-    return data;
-  }
-};
-
-const PendingAdSchema = mockSchemaValidation;
-const GetAdInputSchema = mockSchemaValidation;
-const GetAllUserAdsInputSchema = mockSchemaValidation;
-const SaveAdSchema = mockSchemaValidation;
+import { describe, expect, test, beforeEach, afterEach } from 'bun:test';
+import {
+  AdStatus,
+  RequestAdInputSchema,
+  RequestAdOutputSchema,
+  PendingAdSchema,
+  GetAdInputSchema,
+  GetAllUserAdsInputSchema,
+  SaveAdSchema
+} from '@metadata/agents/ads-agent.schema';
 
 describe('Ads Generator Schema Validation', () => {
+  // Mock console methods to suppress output
+  const originalConsoleError = console.error;
+  const originalConsoleWarn = console.warn;
+
+  beforeEach(() => {
+    // Silence console output during tests
+    console.error = () => {};
+    console.warn = () => {};
+  });
+
+  afterEach(() => {
+    // Restore console methods after tests
+    console.error = originalConsoleError;
+    console.warn = originalConsoleWarn;
+  });
+
   describe('RequestAdInputSchema', () => {
     const validInput = {
       prompt: 'Create an ad for a coffee shop',
