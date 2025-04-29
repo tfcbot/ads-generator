@@ -19,7 +19,12 @@ export function useRequestAds() {
       if (!token) {
         throw new Error('No token found');
       }
+      try {
         return await postAds(request, token);
+      } catch (error) {
+        console.error('Error in useRequestAds:', error);
+        throw error;
+      }
     },
     onSuccess: (data: RequestAdOutput) => {
       if (data && data.adId) {
@@ -45,10 +50,15 @@ export function useGetAllAds() {
     queryFn: async () => {
       const token = await getAuthToken();
       if (!token) {
-        return null;
+        throw new Error('Authentication required');
       }
-      const response = await getAllAds(token);
-      return response;
+      try {
+        const response = await getAllAds(token);
+        return response;
+      } catch (error) {
+        console.error('Error in useGetAllAds:', error);
+        throw error;
+      }
     },
   });
 }
@@ -94,19 +104,23 @@ export function useGetAdsById(adId?: string) {
   const query = useQuery({
     queryKey: ['ad', adId],
     queryFn: async (context: QueryFunctionContext) => {
-      if (!adId) return null;
+      if (!adId) throw new Error("Ad ID is required");
 
       const token = await getAuthToken();
       
       const timestamp = new Date().getTime();
       console.log(`Fetching ad ${adId} at ${timestamp}, attempt: ${context.meta?.attemptCount || 1}`);
       
-      const response = await getAdsById(adId, token || undefined);
-      
-      return response;
+      try {
+        const response = await getAdsById(adId, token || undefined);
+        return response;
+      } catch (error) {
+        console.error(`Error fetching ad ${adId}:`, error);
+        throw error;
+      }
     },
     refetchInterval: (query) => {
-      const data = query.state.data as RequestAdOutput | null;
+      const data = query.state.data as RequestAdOutput | undefined;
       
       // If not pending, stop polling
       if (!adId || !data || data.adStatus !== AdStatus.PENDING) {

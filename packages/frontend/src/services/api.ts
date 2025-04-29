@@ -59,22 +59,11 @@ export const getAllAds = async (token?: string): Promise<RequestAdOutput[]> => {
     const responseData = await response.json();
     
     // Parse response with Zod schema
-    const result = AdsListResponseSchema.safeParse(responseData);
-    if (result.success) {
-      return result.data.data;
-    }
-    
-    // Try parsing direct array response as fallback
-    const directResult = z.array(RequestAdOutputSchema).safeParse(responseData);
-    if (directResult.success) {
-      return directResult.data;
-    }
-    
-    console.error('Invalid response format from getAllAds:', result.error || responseData);
-    return [];
+    const result = AdsListResponseSchema.parse(responseData);
+    return result.data;
   } catch (error) {
     console.error('Error fetching all ads:', error);
-    return [];
+    throw error;
   }
 }
 
@@ -83,7 +72,7 @@ const AdResponseSchema = MessageSchema.extend({
   data: RequestAdOutputSchema
 });
 
-export const getAdsById = async (adId: string, token?: string): Promise<RequestAdOutput | null> => {
+export const getAdsById = async (adId: string, token?: string): Promise<RequestAdOutput> => {
   const timestamp = new Date().getTime();
   const absoluteUrl = await getAbsoluteUrl(`/ads/${adId}?_t=${timestamp}`);
   try {
@@ -98,22 +87,11 @@ export const getAdsById = async (adId: string, token?: string): Promise<RequestA
     const responseData = await response.json();
     
     // Parse response with Zod schema
-    const result = AdResponseSchema.safeParse(responseData);
-    if (result.success) {
-      return result.data.data;
-    }
-    
-    // Try parsing direct response as fallback
-    const directResult = RequestAdOutputSchema.safeParse(responseData);
-    if (directResult.success) {
-      return directResult.data;
-    }
-    
-    console.error('Invalid response format from getAdsById:', responseData);
-    return null;
+    const result = AdResponseSchema.parse(responseData);
+    return result.data;
   } catch (error) {
     console.error('Error fetching ad:', error);
-    return null;
+    throw error;
   } 
 }
 
@@ -137,18 +115,8 @@ export const postAds = async (requestData: RequestAdFormInput, token: string): P
     const responseData = await response.json();
     
     // Parse response with Zod schema
-    const result = AdResponseSchema.safeParse(responseData);
-    if (result.success) {
-      return result.data.data;
-    }
-    
-    // Try parsing direct response as fallback
-    const directResult = RequestAdOutputSchema.safeParse(responseData);
-    if (directResult.success) {
-      return directResult.data;
-    }
-    
-    throw new Error('Invalid response format from postAds');
+    const result = AdResponseSchema.parse(responseData);
+    return result.data;
   } catch (error) {
     console.error('Error posting ad:', error);
     throw error;
