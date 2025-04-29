@@ -6,6 +6,14 @@ import { useRequestAds } from '../hooks/useAdsHooks';
 import { RequestAdsFormInput } from '../../../metadata/agents/ads-agent.schema';
 import { useQueryClient } from '@tanstack/react-query';
 
+// Sample data for the form
+const SAMPLE_DATA: Partial<RequestAdsFormInput> = {
+  prompt: "Create an eye-catching summer promotion ad for our new refreshing iced tea drinks with a 20% discount for new customers.",
+  targetAudience: "Health-conscious adults ages 25-45 who enjoy beverages with natural ingredients and are active on social media.",
+  brandInfo: "FreshBrew is an organic tea company that specializes in naturally flavored iced teas made with premium ingredients. Our products contain no artificial sweeteners or preservatives.",
+  stylePreferences: "Modern, bright and refreshing with vibrant colors. Should evoke a summer feeling and highlight the natural ingredients.",
+};
+
 export function AdsForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -37,6 +45,11 @@ export function AdsForm() {
         }
       }
     });
+  };
+
+  // Function to fill form with sample data
+  const fillWithSampleData = () => {
+    setFormData(SAMPLE_DATA);
   };
   
   return (
@@ -111,7 +124,14 @@ export function AdsForm() {
           </div>
         )}
         
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <button
+            type="button"
+            onClick={fillWithSampleData}
+            className="py-2 px-4 bg-bg-tertiary text-fg-secondary rounded-md font-medium border border-border hover:bg-bg-quaternary"
+          >
+            Fill with Sample Data
+          </button>
           <button
             type="submit"
             disabled={isPending}

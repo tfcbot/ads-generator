@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RequestAdInput, RequestAdOutput, AdStatus, RequestAdFormInput } from '@metadata/agents/ads-agent.schema';
 import { getAllAds, getAdsById, postAds } from '../services/api';
 import { useAuth } from './useAuth';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /**
  * Hook for generating ads
@@ -67,6 +67,8 @@ export function useGetAdsById(adId?: string) {
   const { getAuthToken } = useAuth();
   const [statusIndex, setStatusIndex] = useState(0);
   const queryClient = useQueryClient();
+  // Use a ref to track attempt count outside of query data to avoid circular references
+  const attemptCountRef = useRef<Record<string, number>>({});
   
   const pendingStatusMessages = [
     "Generating your ad...",
@@ -107,19 +109,15 @@ export function useGetAdsById(adId?: string) {
       const data = query.state.data as RequestAdOutput | null;
       
       // If not pending, stop polling
-      if (!data || data.adStatus !== AdStatus.PENDING) {
+      if (!adId || !data || data.adStatus !== AdStatus.PENDING) {
         return false;
       }
       
-      // Calculate attempt count from custom property we'll store
-      const currentData = queryClient.getQueryData(['ad', adId]) as any;
-      const attemptCount = (currentData?._attemptCount || 0) + 1;
-      
-      // Store attempt count as a custom property on the data
-      queryClient.setQueryData(['ad', adId], {
-        ...data,
-        _attemptCount: attemptCount
-      });
+      // Track attempt count in a ref instead of in the query data
+      if (!attemptCountRef.current[adId]) {
+        attemptCountRef.current[adId] = 0;
+      }
+      attemptCountRef.current[adId] += 1;
       
       // Calculate exponential backoff with a base of 5 seconds
       // Cap at 60 seconds (1 minute) to ensure we're still checking regularly
@@ -128,7 +126,7 @@ export function useGetAdsById(adId?: string) {
       const maxInterval = 60000; // 1 minute
       
       const interval = Math.min(
-        baseInterval * Math.pow(factor, attemptCount - 1), 
+        baseInterval * Math.pow(factor, attemptCountRef.current[adId] - 1), 
         maxInterval
       );
       
