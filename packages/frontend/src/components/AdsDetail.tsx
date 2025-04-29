@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGetAdsById } from '../hooks/useAdsHooks';
 import Link from 'next/link';
 import { AdStatus } from '@metadata/agents/ads-agent.schema';
@@ -29,10 +29,11 @@ export function AdsDetail({ adId }: { adId: string }) {
       .replace(/^\*\*(.*)\*\*$/, '$1') // Remove markdown ** if present
       .trim();
       
-    const titleMatch = cleanTitle.match(/^(?:Title:\s*)?[""]?(.+?)[""]?$/i);
+    const titleMatch = cleanTitle.match(/^(?:Title:\s*)?[\""]?(.+?)[\""]?$/i);
     return titleMatch ? titleMatch[1] : cleanTitle;
   };
   
+  // Loading state
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center p-12 min-h-[60vh]">
@@ -42,6 +43,7 @@ export function AdsDetail({ adId }: { adId: string }) {
     );
   }
   
+  // Error state
   if (isError || !ad) {
     return (
       <div className="bg-error bg-opacity-10 p-8 rounded-lg text-center">
@@ -84,6 +86,16 @@ export function AdsDetail({ adId }: { adId: string }) {
             <h1 className="text-xl md:text-2xl font-bold text-fg-primary leading-tight mb-1">
               {title}
             </h1>
+            {isPending() && (
+              <div className="mt-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  <svg className="mr-1.5 h-2 w-2 text-yellow-400 animate-pulse" fill="currentColor" viewBox="0 0 8 8">
+                    <circle cx="4" cy="4" r="3" />
+                  </svg>
+                  Processing
+                </span>
+              </div>
+            )}
           </div>
           
           {/* Action buttons below title, justified right */}
@@ -139,7 +151,7 @@ export function AdsDetail({ adId }: { adId: string }) {
                 </div>
               </div>
               <p className="text-fg-secondary text-center animate-pulse">
-                {statusMessage}
+                {statusMessage || "Generating your ad..."}
               </p>
               <p className="text-fg-tertiary text-sm mt-4">
                 This may take a few minutes
