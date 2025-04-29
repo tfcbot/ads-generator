@@ -48,6 +48,10 @@ export const getAllAds = async (token?: string): Promise<RequestAdOutput[]> => {
     
     const data = await response.json();
     
+    // Check if the response has the expected structure
+    if (data && data.data && Array.isArray(data.data)) {
+      return data.data;
+    }
 
     // If we reach here, the response format was unexpected
     console.error('Unexpected response format from getAllAds:', data);
@@ -70,7 +74,13 @@ export const getAdsById = async (adId: string, token?: string): Promise<RequestA
       throw new Error(`Failed to fetch ad: ${response.status} ${response.statusText}`);
     }
     
-    const data = await response.json() as RequestAdOutput;
+    const data = await response.json();
+    
+    // Check if the response has the expected structure
+    if (data && data.data) {
+      return data.data;
+    }
+    
     return data;
   } catch (error) {
     console.error('Error fetching ad:', error);
@@ -81,8 +91,6 @@ export const getAdsById = async (adId: string, token?: string): Promise<RequestA
 export const postAds = async (requestData: RequestAdFormInput, token: string): Promise<RequestAdOutput> => {
   const absoluteUrl = await getAbsoluteUrl('/ads');
   try {
-
-    
     
     const response = await fetch(absoluteUrl, {
       method: 'POST',
@@ -98,7 +106,13 @@ export const postAds = async (requestData: RequestAdFormInput, token: string): P
     }
 
     // Return the server response, which should now be the pending ad with the same ID
-    const serverResponse = await response.json() as RequestAdOutput;
+    const serverResponse = await response.json();
+    
+    // Check if the response has the expected structure
+    if (serverResponse && serverResponse.data) {
+      return serverResponse.data;
+    }
+    
     return serverResponse;
     
   } catch (error) {
@@ -106,3 +120,4 @@ export const postAds = async (requestData: RequestAdFormInput, token: string): P
     throw error;
   }
 }
+
