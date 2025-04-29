@@ -1,0 +1,13 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@metadata/*": ["../../../packages/metadata/*"],
+      "@agent-runtime/*": ["../../../packages/core/src/orchestrator/agent-runtime/*"],
+      "@lib/*": ["../../../packages/core/src/lib/*"],
+      "@utils/*": ["../../../packages/utils/src/*"]
+    }
+  },
+  "include": ["./**/*.ts"]
+}
