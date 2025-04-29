@@ -2,7 +2,7 @@ import { SaveAdSchema, RequestAdInput, AdStatus } from '@metadata/agents/ads-age
 import { Message } from '@metadata/message.schema';
 import { runAdGeneration } from '../adapters/secondary/openai.adapter';
 import { adRepository } from '../adapters/secondary/datastore.adapter';
-import { uploadImageToS3 } from '@utils/tools/s3-helpers';
+import { uploadImageToS3, getCloudFrontUrl } from '@utils/tools/s3-helpers';
 
 export const runAdUsecase = async (input: RequestAdInput): Promise<Message> => {
   console.info("Generating ad for User");
@@ -13,7 +13,8 @@ export const runAdUsecase = async (input: RequestAdInput): Promise<Message> => {
     console.info("Ad generated successfully");
     
     // Upload the base64 image to S3
-    const s3Url = await uploadImageToS3(imageData, `ads/${input.id}.png`, true);
+    await uploadImageToS3(imageData, `ads/${input.id}.png`, true);
+    const cloudFrontUrl = await getCloudFrontUrl(`ads/${input.id}.png`);
     console.info("Ad uploaded to S3 successfully");
 
     const ad = {
@@ -22,7 +23,7 @@ export const runAdUsecase = async (input: RequestAdInput): Promise<Message> => {
       targetAudience: input.targetAudience,
       brandInfo: input.brandInfo,
       style: input.style,
-      imageUrl: s3Url,
+      imageUrl: cloudFrontUrl,
       adStatus: AdStatus.COMPLETED
     };
 

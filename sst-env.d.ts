@@ -9,6 +9,14 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Dynamo"
     }
+    "AdsBucket": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
+    "AdsBucketRouter": {
+      "type": "sst.aws.Router"
+      "url": string
+    }
     "BackendApi": {
       "type": "sst.aws.ApiGatewayV2"
       "url": string

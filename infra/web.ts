@@ -3,7 +3,7 @@ import {
 } from "./database";
 
 import { clerkClientPublishableKey, clerkClientSecretKey, secrets, stripePublishableKey } from "./secrets";
-
+import { adsbucket, adsBucketRouter } from "./bucket";
 
 export const api = new sst.aws.ApiGatewayV2('BackendApi')
 
@@ -12,7 +12,9 @@ const tables = [usersTable, userKeysTable, adsTable]
 
 export const apiResources = [
   ...tables,
-  ...secrets
+  ...secrets,
+  adsbucket,
+  adsBucketRouter
 ]
 
 

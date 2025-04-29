@@ -4,6 +4,11 @@ import { storeS3Image } from "./s3-utils";
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION || "us-east-1" });
 
+export async function getCloudFrontUrl(key: string): Promise<string> {
+  const cdnDomain = Resource.AdsBucketRouter.url;
+  return `${cdnDomain}/${key}`;
+}
+
 export async function uploadImageToS3(imageData: string, key: string, isBase64 = false): Promise<string> {
   try {
     let buffer: Buffer;
@@ -18,14 +23,13 @@ export async function uploadImageToS3(imageData: string, key: string, isBase64 =
       buffer = Buffer.from(arrayBuffer);
     }
     
-    const bucketName = process.env.AD_IMAGES_BUCKET_NAME || "ad-images-bucket";
+    const bucketName = Resource.AdsBucket.name;
     
     await s3Client.send(new PutObjectCommand({
       Bucket: bucketName,
       Key: key,
       Body: buffer,
       ContentType: 'image/png',
-      ACL: 'public-read'
     }));
     
     return `https://${bucketName}.s3.amazonaws.com/${key}`;

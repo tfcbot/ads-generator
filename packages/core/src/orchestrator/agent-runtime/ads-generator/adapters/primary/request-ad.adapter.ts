@@ -64,8 +64,9 @@ const createPendingAd = async (input: RequestAdInput) => {
     imageUrl: '',
     adStatus: AdStatus.PENDING,
   });
-
+  console.info("Saving pending ad");
   await adRepository.saveAd(initialAd);
+  console.info("Pending ad saved successfully");
   return initialAd;
 };
 

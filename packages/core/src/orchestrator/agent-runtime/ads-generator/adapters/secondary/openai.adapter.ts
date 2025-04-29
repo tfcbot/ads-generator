@@ -8,20 +8,27 @@ const client = new OpenAI({
 });
 
 export const generateAd = async (input: RequestAdInput): Promise<string> => {
+  console.info("Starting ad generation with OpenAI");
+  console.info(`Generating ad for prompt with target audience: ${input.targetAudience}`);
+  
   try {
+    console.info("Sending request to OpenAI image generation API");
     const response = await client.images.generate({
       model: "gpt-image-1",
       prompt: userPrompt(input),
       n: 1,
       size: "1024x1024",
     });
+    console.info("Received response from OpenAI image generation API");
 
     // gpt-image-1 model returns base64 encoded images instead of URLs
     const imageBase64 = response.data[0].b64_json;
     if (!imageBase64) {
+      console.error("No image data returned from OpenAI");
       throw new Error('No image data returned from OpenAI');
     }
-  
+    
+    console.info("Successfully generated image for ad");
     return imageBase64;
   } catch (error) {
     console.error('Error generating ad:', error);

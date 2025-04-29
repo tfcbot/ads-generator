@@ -7,7 +7,7 @@ import {
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { ValidUser } from '@metadata/saas-identity.schema';
 import { getUserAdsUsecase } from '../../usecase/get-all-ads.usecase';
-import { GetAllUserAdsInput, GetAllUserAdsInputSchema } from '@metadata/agents/ads-generator.schema';
+import { GetAllUserAdsInput, GetAllUserAdsInputSchema } from '@metadata/agents/ads-agent.schema';
 
 const getAllAdsEventParser: EventParser<GetAllUserAdsInput> = (
   event: APIGatewayProxyEventV2,

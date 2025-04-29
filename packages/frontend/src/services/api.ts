@@ -78,7 +78,7 @@ export const getAdsById = async (adId: string, token?: string): Promise<RequestA
   } 
 }
 
-export const postAds = async (requestData: RequestAdFormInput, token: string): Promise<void> => {
+export const postAds = async (requestData: RequestAdFormInput, token: string): Promise<RequestAdOutput> => {
   const absoluteUrl = await getAbsoluteUrl('/ads');
   try {
 
@@ -99,7 +99,7 @@ export const postAds = async (requestData: RequestAdFormInput, token: string): P
 
     // Return the server response, which should now be the pending ad with the same ID
     const serverResponse = await response.json() as RequestAdOutput;
-
+    return serverResponse;
     
   } catch (error) {
     console.error('Error posting ad:', error);
