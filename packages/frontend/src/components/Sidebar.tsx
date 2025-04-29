@@ -41,7 +41,7 @@ export function Sidebar() {
 
       <nav className="mt-8">
         <NavLink href="/" active={pathname === '/'} isCollapsed={isCollapsed}>
-          {isCollapsed ? '📝' : 'Submit Task'}
+          {isCollapsed ? '📝' : 'Submit Request'}
         </NavLink>
 
         <NavLink href="/ads" active={pathname.startsWith('/ads')} isCollapsed={isCollapsed}>

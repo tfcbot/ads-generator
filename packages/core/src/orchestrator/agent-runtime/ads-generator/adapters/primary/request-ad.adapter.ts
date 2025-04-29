@@ -5,7 +5,7 @@ import {
     LambdaAdapterOptions,
     GetUserInfo
   } from '@lib/lambda-adapter.factory';
-import { RequestAdInputSchema, RequestAdInput, AdStatus, PendingAdSchema } from "@metadata/agents/ads-generator.schema";
+import { RequestAdInputSchema, RequestAdInput, AdStatus, PendingAdSchema, RequestAdOutput, PendingAd } from "@metadata/agents/ads-agent.schema";
 import { OrchestratorHttpResponses } from '@metadata/http-responses.schema';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { ValidUser } from '@metadata/saas-identity.schema';
@@ -64,12 +64,13 @@ const createPendingAd = async (input: RequestAdInput) => {
     imageUrl: '',
     adStatus: AdStatus.PENDING,
   });
-
+  console.info("Saving pending ad");
   await adRepository.saveAd(initialAd);
+  console.info("Pending ad saved successfully");
   return initialAd;
 };
 
-const executeAdUsecase = async (input: RequestAdInput) => {
+const executeAdUsecase = async (input: RequestAdInput): Promise<PendingAd> => {
   const pendingAd = await createPendingAd(input);
   
   runAdUsecase(input).catch(error => {
@@ -84,5 +85,8 @@ export const requestAdAdapter = createLambdaAdapter({
   useCase: executeAdUsecase,
   eventParser: adEventParser,
   options: adAdapterOptions,
-  responseFormatter: (result) => OrchestratorHttpResponses.ACCEPTED({ body: result })
+  responseFormatter: (result) => OrchestratorHttpResponses.PendingAdResponse({ body: {
+    message: 'Ad retrieved successfully',
+    data: result
+  }})
 });

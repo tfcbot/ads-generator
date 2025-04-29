@@ -1,41 +1,35 @@
 import OpenAI from "openai";
-import { RequestAdInput, RequestAdOutput, RequestAdOutputSchema, systemPrompt, userPrompt } from "@metadata/agents/ads-generator.schema";
+import { RequestAdInput, RequestAdOutput, RequestAdOutputSchema, systemPrompt, userPrompt } from "@metadata/agents/ads-agent.schema";
 import { Resource } from "sst";
 import { withRetry } from "@utils/tools/retry";
-import { uploadImageToS3 } from "@utils/tools/s3-helpers";
 
 const client = new OpenAI({
   apiKey: Resource.OpenAiApiKey.value
 });
 
-export const generateAd = async (input: RequestAdInput): Promise<RequestAdOutput> => {
+export const generateAd = async (input: RequestAdInput): Promise<string> => {
+  console.info("Starting ad generation with OpenAI");
+  console.info(`Generating ad for prompt with target audience: ${input.targetAudience}`);
+  
   try {
+    console.info("Sending request to OpenAI image generation API");
     const response = await client.images.generate({
       model: "gpt-image-1",
       prompt: userPrompt(input),
       n: 1,
       size: "1024x1024",
     });
+    console.info("Received response from OpenAI image generation API");
 
-    const imageUrl = response.data[0].url;
-    
-    if (!imageUrl) {
-      throw new Error('No image URL returned from OpenAI');
+    // gpt-image-1 model returns base64 encoded images instead of URLs
+    const imageBase64 = response.data[0].b64_json;
+    if (!imageBase64) {
+      console.error("No image data returned from OpenAI");
+      throw new Error('No image data returned from OpenAI');
     }
     
-    const s3Url = await uploadImageToS3(imageUrl, `ads/${input.id}.png`);
-    
-    const adData = RequestAdOutputSchema.parse({
-      adId: input.id,
-      prompt: input.prompt,
-      targetAudience: input.targetAudience,
-      brandInfo: input.brandInfo,
-      style: input.style,
-      imageUrl: s3Url,
-      adStatus: "completed"
-    });
-    
-    return adData;
+    console.info("Successfully generated image for ad");
+    return imageBase64;
   } catch (error) {
     console.error('Error generating ad:', error);
     throw error;

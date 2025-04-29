@@ -1,9 +1,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { RequestAdsFormInput, RequestAdsOutput, AdsStatus } from '../../../metadata/agents/ads-agent.schema';
+import { RequestAdInput, RequestAdOutput, AdStatus, RequestAdFormInput } from '@metadata/agents/ads-agent.schema';
 import { getAllAds, getAdsById, postAds } from '../services/api';
 import { useAuth } from './useAuth';
+import { useState, useEffect, useRef } from 'react';
 
 /**
  * Hook for generating ads
@@ -13,18 +14,23 @@ export function useRequestAds() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (request: RequestAdsFormInput) => {
+    mutationFn: async (request: RequestAdFormInput): Promise<RequestAdOutput> => {
       const token = await getAuthToken();
       if (!token) {
         throw new Error('No token found');
       }
-      return await postAds(request, token);
+      try {
+        return await postAds(request, token);
+      } catch (error) {
+        console.error('Error in useRequestAds:', error);
+        throw error;
+      }
     },
-    onSuccess: (data) => {
+    onSuccess: (data: RequestAdOutput) => {
       if (data && data.adId) {
         queryClient.setQueryData(['ad', data.adId], data);
         
-        const allAds = queryClient.getQueryData<RequestAdsOutput[]>(['allAds']);
+        const allAds = queryClient.getQueryData<RequestAdOutput[]>(['allAds']);
         if (allAds) {
           queryClient.setQueryData(['allAds'], [data, ...allAds]);
         }
@@ -44,49 +50,110 @@ export function useGetAllAds() {
     queryFn: async () => {
       const token = await getAuthToken();
       if (!token) {
-        return null;
+        throw new Error('Authentication required');
       }
-      const response = await getAllAds(token);
-      return response;
+      try {
+        const response = await getAllAds(token);
+        return response;
+      } catch (error) {
+        console.error('Error in useGetAllAds:', error);
+        throw error;
+      }
     },
   });
 }
 
+// Custom type for query function context that includes meta
+interface QueryFunctionContext {
+  meta?: {
+    attemptCount?: number;
+  };
+}
+
 /**
- * Hook for fetching a specific ad by ID
+ * Hook for fetching a specific ad by ID with exponential backoff
  */
 export function useGetAdsById(adId?: string) {
   const { getAuthToken } = useAuth();
+  const [statusIndex, setStatusIndex] = useState(0);
+  const queryClient = useQueryClient();
+  // Use a ref to track attempt count outside of query data to avoid circular references
+  const attemptCountRef = useRef<Record<string, number>>({});
+  
+  const pendingStatusMessages = [
+    "Generating your ad...",
+    "Creating visual elements...",
+    "Adding brand elements...",
+    "Finalizing design...",
+    "Almost there...",
+    "This might take a few minutes...",
+    "AI is working on your ad...",
+    "Building your creative assets...",
+    "Crafting the perfect ad for your brand...",
+  ];
+  
+  // Set up rotation for status messages
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStatusIndex(prev => (prev + 1) % pendingStatusMessages.length);
+    }, 2500);
+    
+    return () => clearInterval(interval);
+  }, []);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['ad', adId],
-    queryFn: async () => {
-      if (!adId) {
-        return null;
-      }
+    queryFn: async (context: QueryFunctionContext) => {
+      if (!adId) throw new Error("Ad ID is required");
 
       const token = await getAuthToken();
       
       const timestamp = new Date().getTime();
-      console.log(`Fetching ad ${adId} at ${timestamp}`);
+      console.log(`Fetching ad ${adId} at ${timestamp}, attempt: ${context.meta?.attemptCount || 1}`);
       
-      const response = await getAdsById(adId, token || undefined);
-      
-      if (!response) {
-        return null;
+      try {
+        const response = await getAdsById(adId, token || undefined);
+        return response;
+      } catch (error) {
+        console.error(`Error fetching ad ${adId}:`, error);
+        throw error;
       }
-      
-      return response as RequestAdsOutput;
     },
     refetchInterval: (query) => {
-      const data = query.state.data as RequestAdsOutput | null;
+      const data = query.state.data as RequestAdOutput | undefined;
       
-      if (data?.adStatus === AdsStatus.PENDING) {
-        return 5000; // Poll every 5 seconds if pending
+      // If not pending, stop polling
+      if (!adId || !data || data.adStatus !== AdStatus.PENDING) {
+        return false;
       }
       
-      return false; // No polling for completed ads
+      // Track attempt count in a ref instead of in the query data
+      if (!attemptCountRef.current[adId]) {
+        attemptCountRef.current[adId] = 0;
+      }
+      attemptCountRef.current[adId] += 1;
+      
+      // Calculate exponential backoff with a base of 5 seconds
+      // Cap at 60 seconds (1 minute) to ensure we're still checking regularly
+      const baseInterval = 5000; // 5 seconds
+      const factor = 1.5;
+      const maxInterval = 60000; // 1 minute
+      
+      const interval = Math.min(
+        baseInterval * Math.pow(factor, attemptCountRef.current[adId] - 1), 
+        maxInterval
+      );
+      
+      console.log(`Next poll in ${interval/1000} seconds`);
+      
+      return interval;
     },
     enabled: !!adId,
+    meta: { attemptCount: 1 },
   });
+
+  return {
+    ...query,
+    statusMessage: pendingStatusMessages[statusIndex],
+  };
 }

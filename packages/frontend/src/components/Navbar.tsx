@@ -23,7 +23,7 @@ export function Navbar() {
           <Credits />
           <BuyCreditsButton />
           <NavLink href="/" active={pathname === '/'}>
-            Submit Task
+            Submit Request
           </NavLink>
 
           

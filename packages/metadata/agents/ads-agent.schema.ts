@@ -1,64 +1,89 @@
 import { z } from "zod";
 import { v4 as uuidv4 } from 'uuid';
 
-export enum AdsStatus {
+export enum AdStatus {
   PENDING = "pending",
   COMPLETED = "completed",
   FAILED = "failed"
 } 
 
-export const RequestAdsFormInputSchema = z.object({
+export const RequestAdFormInputSchema = z.object({
   prompt: z.string(),
   targetAudience: z.string(),
   brandInfo: z.string(),
-  stylePreferences: z.string(),
+  style: z.string().optional(),
 });
 
-export const RequestAdsInputSchema = z.object({
+export const RequestAdInputSchema = z.object({
   prompt: z.string(),
   targetAudience: z.string(),
   brandInfo: z.string(),
-  stylePreferences: z.string(),
+  style: z.string().optional(),
   id: z.string().optional().default(uuidv4()),
   userId: z.string(),
   keyId: z.string(),
 });
 
-export const PendingAdsSchema = z.object({
+export const systemPrompt = `
+You are an ad generation agent.
+
+You are responsible for creating compelling ad images based on the provided information.
+
+You will be given a prompt, target audience, brand information, and optional style preferences.
+Use this information to create an effective ad image.
+`;
+
+export const userPrompt = (input: RequestAdInput): string => `
+Generate an ad image according to the following information:
+
+Prompt: ${input.prompt}
+Target Audience: ${input.targetAudience}
+Brand Information: ${input.brandInfo}
+${input.style ? `Style Preferences: ${input.style}` : ''}
+
+IMPORTANT REQUIREMENTS:
+- The image MUST be designed to fit perfectly within a 1024x1024 pixel square format.
+- All important text and visual elements must be well within the boundaries, with proper margins to prevent cutting off.
+- Ensure any text is legible and not too close to the edges.
+- Properly size and position all elements to be fully visible without cropping.
+- Maintain adequate spacing around the edges to prevent any content from being cut off.
+`;
+
+export const PendingAdSchema = z.object({
   adId: z.string(),
   userId: z.string(),
-  title: z.string(), 
-  content: z.string(),
-  imageUrl: z.string(),
+  prompt: z.string(),
   targetAudience: z.string(),
   brandInfo: z.string(),
-  stylePreferences: z.string(),
-  adStatus: z.nativeEnum(AdsStatus).default(AdsStatus.PENDING),
+  style: z.string().optional(),
+  imageUrl: z.string().optional(),
+  adStatus: z.nativeEnum(AdStatus).default(AdStatus.PENDING),
 });
 
-export const RequestAdsOutputSchema = z.object({
+export const RequestAdOutputSchema = z.object({
   adId: z.string(),
-  title: z.string(), 
-  content: z.string(),
-  imageUrl: z.string(),
+  prompt: z.string(),
   targetAudience: z.string(),
   brandInfo: z.string(),
-  stylePreferences: z.string(),
-  adStatus: z.nativeEnum(AdsStatus).default(AdsStatus.PENDING),
+  style: z.string().optional(),
+  imageUrl: z.string(),
+  adStatus: z.nativeEnum(AdStatus).default(AdStatus.COMPLETED),
 });
 
-export const SaveAdsSchema = z.object({
+
+
+export const SaveAdSchema = z.object({
   adId: z.string(),
   userId: z.string(),
-  title: z.string(), 
-  content: z.string(),
-  imageUrl: z.string(),
+  prompt: z.string(),
   targetAudience: z.string(),
   brandInfo: z.string(),
-  stylePreferences: z.string(),
+  style: z.string().optional(),
+  imageUrl: z.string().optional(),
+  adStatus: z.nativeEnum(AdStatus)
 });
 
-export const GetAdsInputSchema = z.object({  
+export const GetAdInputSchema = z.object({  
   userId: z.string(),
   adId: z.string(),
 });
@@ -67,10 +92,12 @@ export const GetAllUserAdsInputSchema = z.object({
   userId: z.string(),
 });
 
-export type RequestAdsOutput = z.infer<typeof RequestAdsOutputSchema>;
-export type RequestAdsInput = z.infer<typeof RequestAdsInputSchema>;
-export type GetAdsInput = z.infer<typeof GetAdsInputSchema>; 
-export type RequestAdsFormInput = z.infer<typeof RequestAdsFormInputSchema>;
+
+
+export type RequestAdOutput = z.infer<typeof RequestAdOutputSchema>;
+export type RequestAdInput = z.infer<typeof RequestAdInputSchema>;
+export type GetAdInput = z.infer<typeof GetAdInputSchema>; 
+export type RequestAdFormInput = z.infer<typeof RequestAdFormInputSchema>;
 export type GetAllUserAdsInput = z.infer<typeof GetAllUserAdsInputSchema>;
-export type SaveAdsInput = z.infer<typeof SaveAdsSchema>;
-export type PendingAds = z.infer<typeof PendingAdsSchema>;
+export type SaveAdInput = z.infer<typeof SaveAdSchema>;
+export type PendingAd = z.infer<typeof PendingAdSchema>;

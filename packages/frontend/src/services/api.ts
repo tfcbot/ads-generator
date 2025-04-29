@@ -1,5 +1,12 @@
-import { RequestAdsFormInput, RequestAdsOutput, AdsStatus } from "@metadata/agents/ads-agent.schema";
-import { randomUUID } from "crypto";
+import { 
+  RequestAdFormInput, 
+  RequestAdOutput, 
+  AdStatus, 
+  RequestAdOutputSchema, 
+  RequestAdFormInputSchema 
+} from "@metadata/agents/ads-agent.schema";
+import { MessageSchema } from "@metadata/message.schema";
+import { z } from "zod";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -31,9 +38,12 @@ export const getHeaders = async (token?: string): Promise<HeadersInit> => {
   return headers;
 };
 
+// Create a response schema that combines MessageSchema with data of type RequestAdOutput[]
+const AdsListResponseSchema = MessageSchema.extend({
+  data: z.array(RequestAdOutputSchema)
+});
 
-
-export const getAllAds = async (token?: string): Promise<RequestAdsOutput[]> => {
+export const getAllAds = async (token?: string): Promise<RequestAdOutput[]> => {
   const timestamp = new Date().getTime();
   const absoluteUrl = await getAbsoluteUrl(`/ads?_t=${timestamp}`);
   try {
@@ -46,29 +56,23 @@ export const getAllAds = async (token?: string): Promise<RequestAdsOutput[]> => 
       throw new Error(`Failed to fetch ads: ${response.status} ${response.statusText}`);
     }
     
-    const data = await response.json();
+    const responseData = await response.json();
     
-    // Handle different response formats
-    if (Array.isArray(data)) {
-      return data;
-    } else if (data && typeof data === 'object') {
-      if (Array.isArray(data.data)) {
-        return data.data;
-      } else if (data.body && Array.isArray(data.body)) {
-        return data.body;
-      }
-    }
-    
-    // If we reach here, the response format was unexpected
-    console.error('Unexpected response format from getAllAds:', data);
-    return [];
+    // Parse response with Zod schema
+    const result = AdsListResponseSchema.parse(responseData);
+    return result.data;
   } catch (error) {
     console.error('Error fetching all ads:', error);
-    return [];
+    throw error;
   }
 }
 
-export const getAdsById = async (adId: string, token?: string): Promise<RequestAdsOutput | null> => {
+// Create a response schema for a single ad
+const AdResponseSchema = MessageSchema.extend({
+  data: RequestAdOutputSchema
+});
+
+export const getAdsById = async (adId: string, token?: string): Promise<RequestAdOutput> => {
   const timestamp = new Date().getTime();
   const absoluteUrl = await getAbsoluteUrl(`/ads/${adId}?_t=${timestamp}`);
   try {
@@ -80,61 +84,27 @@ export const getAdsById = async (adId: string, token?: string): Promise<RequestA
       throw new Error(`Failed to fetch ad: ${response.status} ${response.statusText}`);
     }
     
-    const data = await response.json();
+    const responseData = await response.json();
     
-    // Log the raw response for debugging
-    console.log('API response for ad:', data);
-    
-    // Handle different response formats
-    if (data && typeof data === 'object') {
-      // Check if data is directly the ad object
-      if (data.adId && data.title && data.content) {
-        return data as RequestAdsOutput;
-      }
-      
-      // Check if wrapped in data property
-      if (data.data && typeof data.data === 'object') {
-        return data.data as RequestAdsOutput;
-      }
-      
-      // Check if wrapped in body property
-      if (data.body && typeof data.body === 'object') {
-        return data.body as RequestAdsOutput;
-      }
-    }
-    
-    return data;
+    // Parse response with Zod schema
+    const result = AdResponseSchema.parse(responseData);
+    return result.data;
   } catch (error) {
     console.error('Error fetching ad:', error);
-    return null;
-  }
+    throw error;
+  } 
 }
 
-export const postAds = async (requestData: RequestAdsFormInput, token: string): Promise<RequestAdsOutput> => {
+export const postAds = async (requestData: RequestAdFormInput, token: string): Promise<RequestAdOutput> => {
   const absoluteUrl = await getAbsoluteUrl('/ads');
   try {
-    // Generate a client-side ID for optimistic updates
-    const clientGeneratedId = typeof window !== 'undefined' ? crypto.randomUUID() : randomUUID();
+    // Validate request data with Zod
+    const validatedData = RequestAdFormInputSchema.parse(requestData);
     
-    // Create optimistic ad object
-    const optimisticAd: RequestAdsOutput = {
-      adId: clientGeneratedId,
-      title: `Ad for: ${requestData.prompt.substring(0, 50)}...`,
-      content: 'Generating your ad...',
-      imageUrl: '',
-      targetAudience: requestData.targetAudience,
-      brandInfo: requestData.brandInfo,
-      stylePreferences: requestData.stylePreferences,
-      adStatus: AdsStatus.PENDING,
-    };
-
     const response = await fetch(absoluteUrl, {
       method: 'POST',
       headers: await getHeaders(token),
-      body: JSON.stringify({
-        ...requestData,
-        id: clientGeneratedId // Send the client-generated ID to the server
-      }),
+      body: JSON.stringify(validatedData),
     });
 
     if (!response.ok) {
@@ -142,18 +112,11 @@ export const postAds = async (requestData: RequestAdsFormInput, token: string): 
       throw new Error(`Failed to post ad: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    // Return the server response, which should now be the pending ad with the same ID
-    const serverResponse = await response.json();
+    const responseData = await response.json();
     
-    // If the server returned a valid response, use it; otherwise, use our optimistic object
-    if (serverResponse && 
-        (serverResponse.adId || 
-         (serverResponse.body && serverResponse.body.adId) || 
-         (serverResponse.data && serverResponse.data.adId))) {
-      return serverResponse;
-    }
-    
-    return optimisticAd;
+    // Parse response with Zod schema
+    const result = AdResponseSchema.parse(responseData);
+    return result.data;
   } catch (error) {
     console.error('Error posting ad:', error);
     throw error;

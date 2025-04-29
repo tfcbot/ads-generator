@@ -10,5 +10,5 @@
         "@utils/*": ["../../packages/utils/src/*"],
       },
   },
-  "include": ["src/**/*", "test/**/*", "sst-env.d.ts", "../metadata/apikey.schema.ts", "../metadata/credit.schema.ts", "../metadata/jwt.schema.ts", "../metadata/message.schema.ts", "../metadata/saas-identity.schema.ts", "../metadata/tools.schema.ts"]
+  "include": ["src/**/*", "test/**/*", "sst-env.d.ts", "../metadata/apikey.schema.ts", "../metadata/credit.schema.ts", "../metadata/jwt.schema.ts", "../metadata/message.schema.ts", "../metadata/saas-identity.schema.ts", "../metadata/tools.schema.ts", "../metadata/s3-schemas.ts"]
 }
