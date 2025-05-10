@@ -1,35 +1,43 @@
-# Cursor Full Stack Template
-![Alpha Version](https://img.shields.io/badge/version-alpha-blue)
+# Ads Generator
 
-This is an opinionated starter template for building full-stack applications with AWS, SST, and React. It provides a solid foundation with pre-configured infrastructure, authentication, and API integrations to help you get started quickly.
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![AWS](https://img.shields.io/badge/AWS-SST-orange)
+![React](https://img.shields.io/badge/React-Frontend-blue)
+![OpenAI](https://img.shields.io/badge/OpenAI-Powered-brightgreen)
 
-You'll want to customize this template to fit your specific project needs. The modular structure allows you to easily modify components, add new features, and adapt the infrastructure as your application grows.
+An AI-powered application for generating compelling ad images based on your business needs. Simply describe your ad requirements, target audience, and brand information, and our AI will create professional ad images optimized for your marketing campaigns.
 
-Key features:
-- SST infrastructure as code
-- DynamoDB tables for data storage
-- React frontend with modern tooling
-- Authentication ready with Clerk 
-- API key management with Unkey
-- Credit based billing with Stripe
-- Email with Resend
-- Modular Monorepo with service based architecture
+## Key Features
 
+- **AI-Powered Ad Generation**: Create professional ad images with just a few inputs
+- **Business Templates**: Pre-configured templates for coaches, consultants, and agencies
+- **Customizable Styles**: Specify your preferred visual style and branding
+- **Audience Targeting**: Optimize your ads for specific audience demographics
+- **Serverless Architecture**: Built with AWS SST for scalable, cost-effective operation
+- **Modern React Frontend**: Clean, responsive user interface
 
-## Get started
+## Architecture
 
+- **SST Infrastructure**: Serverless infrastructure as code
+- **DynamoDB**: Scalable storage for ad data
+- **React Frontend**: Modern, responsive user interface
+- **OpenAI Integration**: AI-powered image generation
+- **Hexagonal Architecture**: Clean, maintainable code structure with adapters and use cases
+
+## Getting Started
 
 1. Install dependencies:
    ```bash
    bun install
    ```
 
-2. Install sst: 
-   ```
+2. Install SST:
+   ```bash
    bun install sst
    ```
 
-2. Create your environment variables:
+3. Create your environment variables:
    - Copy the `.env.template` file to `.env`
    - Update the values in `.env` with your configuration
 
@@ -37,13 +45,14 @@ Key features:
    ```bash
    export AWS_PROFILE=your-profile-name
    ```
-3. Load secrets into SST:
+
+5. Load secrets into SST:
    ```bash
    bun sst secret load .env --stage <your-stage>
    ```
    Replace `<your-stage>` with your desired stage (e.g., dev, staging, prod)
 
-5. Start development or deploy:
+6. Start development or deploy:
    ```bash
    # For local development
    bun sst dev
@@ -52,42 +61,72 @@ Key features:
    bun sst deploy
    ```
 
+## Project Structure
 
+This project uses a modular monorepo structure with the following packages:
 
-## Usage
+1. **core/**: Contains the business logic, adapters, and use cases for the ad generation service
+   - Hexagonal architecture with primary and secondary adapters
+   - OpenAI integration for image generation
+   - Repository implementations for data persistence
 
-This template uses [Workspaces](https://bun.sh/docs/install/workspaces). It has 5 packages to start with and you can add more if needed:
+2. **functions/**: AWS Lambda functions for the API endpoints
+   - Request ad generation
+   - Retrieve generated ads
+   - User authentication and management
 
-1. `core/`
-   
-   The core package contains foundational libraries and orchestration logic for your application. It includes AWS service integrations, shared business logic, and core functionality that other packages depend on. This is the central shared code that can be imported by other packages in your project.
+3. **frontend/**: React application for the user interface
+   - Ad creation form with templates
+   - Ad gallery and detail views
+   - Responsive design for all devices
 
-2. `functions/`
+4. **metadata/**: Schema definitions and type declarations
+   - Zod schemas for validation
+   - TypeScript types for end-to-end type safety
+   - Shared constants and enums
 
-   This package contains your AWS Lambda functions that handle API requests and other serverless operations. It uses the `core` package as a local dependency to access shared business logic and AWS integrations. Examples include authentication, billing, and agent runtime functions.
+5. **utils/**: Utility functions and helpers
+   - OpenAI client configuration
+   - AWS service integrations
+   - Common helper functions
 
-3. `frontend/`
+## Development Workflow
 
-   The frontend package contains a Next.js web application with Tailwind CSS for styling. This is where your user interface components, pages, and client-side logic reside. It provides the visual interface for interacting with your backend services.
+1. Make changes to the codebase
+2. Run tests to ensure functionality:
+   ```bash
+   bun test
+   ```
+3. Start the local development server:
+   ```bash
+   bun sst dev
+   ```
+4. Access the frontend at http://localhost:3000
 
-4. `metadata/`
+## Deployment
 
-   The metadata package serves as a central repository for schema definitions, type declarations, and data models. It uses Zod for schema validation and type inference. This package defines the structure of your data entities, API contracts, and standardizes response formats across your application.
+The application can be deployed to AWS using SST:
 
-5. `utils/`
+```bash
+bun sst deploy --stage prod
+```
 
-   The utils package contains utility functions, helpers, and tools that can be used across multiple packages. It provides common functionality that doesn't belong in the core business logic but is still needed throughout the application.
+This will deploy all resources including:
+- API Gateway endpoints
+- Lambda functions
+- DynamoDB tables
+- S3 buckets for image storage
+- CloudFront distributions
 
+## Contributing
 
-### Infrastructure
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
 
-The `infra/` directory allows you to logically split the infrastructure of your app into separate files. This can be helpful as your app grows.
+## License
 
-In the template, `web.ts`. These export the created resources. And are imported in the `sst.config.ts`.
+MIT
 
-For more guidance on how to define your infrastructure, head over to [sst docs](https://sst.dev/docs/).
-
-To see examples of different set ups, see [sst examples](https://sst.dev/docs/examples/).
-
-# Chat With This Repo
-You can chat with this repo [here](https://deepwiki.com/tfcbot/fs-template/1.1-project-architecture)
