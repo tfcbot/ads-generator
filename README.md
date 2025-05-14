@@ -5,6 +5,7 @@
 ![AWS](https://img.shields.io/badge/AWS-SST-orange)
 ![React](https://img.shields.io/badge/React-Frontend-blue)
 ![OpenAI](https://img.shields.io/badge/OpenAI-Powered-brightgreen)
+![Reference](https://img.shields.io/badge/Status-Reference-yellow)
 
 An AI-powered application for generating compelling ad images based on your business needs. Simply describe your ad requirements, target audience, and brand information, and our AI will create professional ad images optimized for your marketing campaigns.
 
@@ -118,15 +119,16 @@ This will deploy all resources including:
 - S3 buckets for image storage
 - CloudFront distributions
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests
-5. Submit a pull request
-
 ## License
 
 MIT
 
+## Reference Repository Notice
+
+This repository serves as a reference implementation. It is provided as an example of how to build an AI-powered ad generation application using AWS SST, React, and OpenAI.
+
+**Please Note:**
+- This is a reference repository only
+- Pull requests will not be accepted
+- Issues will not be addressed
+- Feel free to fork this repository and adapt it for your own projects
